@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0a0c"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Laura Train"/>
+<link rel="manifest" href="./manifest.webmanifest"/>
+<link rel="apple-touch-icon" href="./icon-192.png"/>
+<title>Laura Train</title>
+<style>
+:root{
+  --bg:#0a0a0c; --panel:#141418; --panel2:#1c1c21; --ink:#f5f4ef;
+  --muted:#9b9ba4; --line:#2b2b31; --accent:#d8ff45; --warn:#ffd166; --danger:#ff7474;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100svh;overscroll-behavior-y:contain}
+button,input,textarea{font:inherit}
+button{touch-action:manipulation}
+.app{max-width:680px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 12px calc(92px + env(safe-area-inset-bottom))}
+.topbar{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:25;padding:8px 0 12px;background:linear-gradient(180deg,var(--bg) 78%,rgba(10,10,12,0))}
+.brand{font-size:12px;letter-spacing:.18em;font-weight:900}
+.pill{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:11px}
+.hero{padding:18px 0 14px}
+.eyebrow{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+h1{font-size:43px;line-height:.92;margin:8px 0 11px;letter-spacing:-.05em}
+.sub{color:var(--muted);font-size:14px;line-height:1.45}
+.card{background:linear-gradient(180deg,#151519,#101013);border:1px solid var(--line);border-radius:22px;padding:15px}
+.card+.card{margin-top:10px}
+.primary{width:100%;border:0;border-radius:17px;background:var(--accent);color:#111;padding:16px 18px;font-weight:950}
+.secondary{border:1px solid var(--line);border-radius:14px;background:transparent;color:var(--ink);padding:12px 14px}
+.ghost{border:0;background:transparent;color:var(--muted);padding:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.badge{padding:7px 10px;border-radius:999px;background:#1a1a1f;border:1px solid transparent;color:var(--muted);font-size:11px}
+.badge.current{border-color:#3b4713;color:var(--accent)}
+.meta{border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:var(--muted);font-size:11px}
+.workout-meta{display:flex;gap:7px;flex-wrap:wrap;margin:11px 0 15px}
+.progress{height:7px;border-radius:999px;background:#232328;overflow:hidden;margin:10px 0}
+.progress>div{height:100%;background:var(--accent)}
+.small{font-size:11px;color:var(--muted);line-height:1.45}
+.section-title{margin:22px 0 8px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.exercise-list{display:grid;gap:9px}
+.exercise{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:14px}
+.exercise .name{font-size:15px;font-weight:850}
+.exercise .detail{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
+.status{font-size:11px;font-weight:900;text-align:right}
+.status.done{color:var(--accent)} .status.partial{color:var(--warn)} .status.todo{color:var(--muted)}
+.back{border:0;background:transparent;color:var(--muted);padding:0 0 11px}
+.last{background:#101013;border:1px dashed #35353d;border-radius:18px;padding:14px;margin:12px 0}
+.last strong{display:block;color:var(--muted);font-size:11px;letter-spacing:.06em;margin-bottom:5px}
+.last .big{font-size:24px;font-weight:950}
+.tip{background:#171f0b;border:1px solid #354211;color:#efffb4;border-radius:16px;padding:12px 14px;font-size:13px;line-height:1.45;margin:12px 0}
+.note{background:#101013;border:1px solid var(--line);border-radius:16px;padding:12px;color:var(--muted);font-size:12px;line-height:1.45}
+.set-card{background:var(--panel);border:1px solid var(--line);border-radius:21px;padding:15px;margin-top:10px}
+.set-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.label{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.counter{display:grid;grid-template-columns:54px 1fr 54px;gap:8px;align-items:center}
+.counter button{height:50px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);color:var(--ink);font-size:26px}
+.value{height:50px;border:1px solid var(--line);border-radius:14px;background:#101013;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:950}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{min-width:44px;border:1px solid var(--line);border-radius:999px;background:#101013;color:var(--muted);padding:9px 12px}
+.chip.active{background:var(--accent);color:#111;border-color:var(--accent);font-weight:900}
+.set-complete{width:100%;margin-top:14px;border:0;border-radius:14px;background:#f3f2ed;color:#111;padding:14px;font-weight:950}
+.set-complete.done{background:#222;color:var(--accent);border:1px solid #3a4612}
+.tabs{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(680px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:rgba(10,10,12,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:30}
+.tab{border:0;background:transparent;color:var(--muted);padding:9px 4px;font-size:10px;font-weight:850;letter-spacing:.06em}
+.tab.active{color:var(--accent)}
+.hidden{display:none!important}
+.timerbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(72px + env(safe-area-inset-bottom));width:min(650px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;background:#17171c;border:1px solid var(--line);border-radius:17px;padding:10px 12px;z-index:28;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.timerbar strong{font-size:18px}
+.timerbar button{border:0;background:transparent;color:var(--muted)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:10px}
+.sheet{width:min(680px,100%);background:#121216;border:1px solid var(--line);border-radius:24px 24px 18px 18px;padding:18px}
+.sheet h3{margin:0 0 10px;font-size:22px}
+.actions{display:grid;gap:8px;margin-top:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}
+.stat b{display:block;font-size:25px;margin-top:4px;letter-spacing:-.04em}
+textarea{width:100%;min-height:88px;border:1px solid var(--line);border-radius:14px;background:#101013;color:var(--ink);padding:12px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.switch{width:48px;height:28px;border-radius:999px;background:#27272d;border:1px solid var(--line);position:relative}
+.switch:after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s}
+.switch.on{background:var(--accent)}
+.switch.on:after{left:22px;background:#111}
+.kpi{display:flex;gap:7px;flex-wrap:wrap}
+.kpi span{border:1px solid var(--line);border-radius:999px;padding:6px 8px;color:var(--muted);font-size:11px}
+.install-banner{margin-top:10px}
+.inline-actions{display:flex;gap:8px;flex-wrap:wrap}
+.inline-actions button{flex:1}
+
+.quote-card{margin-top:10px;background:linear-gradient(135deg,#18180f,#111114);border:1px solid #34391d;border-radius:20px;padding:15px}
+.quote-card .quote{font-size:16px;line-height:1.35;font-weight:800;letter-spacing:-.02em}
+.folder-grid{display:grid;grid-template-columns:1fr;gap:9px}
+.folder{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}
+.folder .letter{width:40px;height:40px;border-radius:13px;background:var(--accent);color:#111;display:flex;align-items:center;justify-content:center;font-weight:950}
+.folder .folder-main{flex:1}
+.folder .folder-name{font-weight:850}
+.folder .folder-detail{font-size:11px;color:var(--muted);margin-top:3px}
+.heat-card{background:linear-gradient(180deg,#151519,#101013);border:1px solid var(--line);border-radius:22px;padding:15px}
+.heat-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.heat-head .count{font-size:27px;font-weight:950;letter-spacing:-.04em}
+.heat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.heat-day{aspect-ratio:1/1;border-radius:5px;background:#28282e;border:1px solid #303037;position:relative}
+.heat-day.active{background:var(--accent);border-color:var(--accent)}
+.heat-day.today{outline:2px solid #f5f4ef;outline-offset:1px}
+.heat-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:5px}
+.heat-labels span{text-align:center;font-size:9px;color:var(--faint,#6c6c75)}
+.week-goal{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.week-dots{display:flex;gap:6px}
+.week-dot{width:26px;height:8px;border-radius:999px;background:#2a2a31}
+.week-dot.active{background:var(--accent)}
+.pr-list{display:grid;gap:8px}
+.pr-item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--line)}
+.pr-item:first-child{border-top:0}
+.pr-item .main{font-weight:800;font-size:13px}
+.pr-item .minor{font-size:11px;color:var(--muted);margin-top:2px}
+.pr-badge{color:var(--accent);font-weight:950;font-size:11px;text-align:right}
+.warmup-tag{display:inline-flex;padding:4px 7px;border-radius:999px;background:#2a2415;color:#ffd889;font-size:9px;font-weight:900;letter-spacing:.06em}
+.skipped{color:#777!important;text-decoration:line-through}
+.complete-overlay{position:fixed;inset:0;background:rgba(10,10,12,.97);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.complete-inner{text-align:center;max-width:360px}
+.check-ring{width:118px;height:118px;border-radius:50%;border:4px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;animation:ringPop .55s cubic-bezier(.2,.8,.2,1)}
+.check-mark{font-size:64px;color:var(--accent);font-weight:950;transform:scale(0);animation:checkPop .45s .25s cubic-bezier(.2,.9,.2,1) forwards}
+.complete-title{font-size:34px;font-weight:950;letter-spacing:-.04em}
+.complete-sub{margin-top:8px;color:var(--muted)}
+@keyframes ringPop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes checkPop{0%{transform:scale(0) rotate(-15deg)}100%{transform:scale(1) rotate(0)}}
+.readonly-workout{display:grid;gap:8px}
+.readonly-row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.readonly-row:first-child{border-top:0}
+.readonly-row .r-name{font-weight:800;font-size:13px}
+.readonly-row .r-last{text-align:right;font-size:11px;color:var(--muted)}
+.session-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.session-row:first-child{border-top:0}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.edit-grid input{width:100%;background:#101013;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">LAURA / TRAIN</div>
+    <div class="pill" id="datePill"></div>
+  </div>
+
+  <section id="view-home">
+    <div class="hero">
+      <div class="eyebrow" id="homeEyebrow">PRÓXIMO TREINO</div>
+      <h1 id="homeWorkoutName">SUPERIOR A</h1>
+      <div class="sub" id="homeWorkoutFocus"></div>
+    </div>
+
+    <div class="quote-card">
+      <div class="eyebrow">HOJE</div>
+      <div class="quote" id="dailyQuote"></div>
+    </div>
+
+    <div class="card" style="margin-top:10px">
+      <div class="workout-meta" id="homeMeta"></div>
+      <div class="progress"><div id="homeProgress"></div></div>
+      <div class="small" id="homeProgressText"></div>
+      <div style="height:14px"></div>
+      <button class="primary" id="homePrimary">COMEÇAR TREINO</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="startStandaloneRun()">REGISTRAR CORRIDA AVULSA</button>
+    </div>
+
+    <div class="section-title">Meus treinos</div>
+    <div class="folder-grid" id="workoutFolders"></div>
+
+    <div class="section-title">Sequência</div>
+    <div class="row" id="sequenceRow"></div>
+
+    <div class="section-title">Último treino</div>
+    <div class="card" id="lastWorkoutCard"></div>
+  </section>
+
+
+  <section id="view-library" class="hidden">
+    <button class="back" onclick="goHome()">← Hoje</button>
+    <div class="eyebrow">MEUS TREINOS</div>
+    <h1 style="font-size:38px" id="libraryTitle"></h1>
+    <div class="sub" id="libraryFocus"></div>
+    <div class="card" style="margin-top:16px">
+      <div class="readonly-workout" id="libraryExercises"></div>
+    </div>
+  </section>
+
+  <section id="view-workout" class="hidden">
+    <button class="back" onclick="goHome()">← Hoje</button>
+    <div class="eyebrow">TREINO EM ANDAMENTO</div>
+    <h1 style="font-size:38px" id="activeWorkoutName"></h1>
+    <div class="sub" id="activeWorkoutFocus"></div>
+    <div class="workout-meta" id="activeWorkoutMeta"></div>
+    <div class="progress"><div id="activeProgress"></div></div>
+    <div class="small" id="activeProgressText"></div>
+
+    <div class="section-title">Exercícios — faça na ordem que quiser</div>
+    <div class="exercise-list" id="exerciseList"></div>
+    <div id="runBlock"></div>
+
+    <div style="height:14px"></div>
+    <button class="primary" onclick="attemptFinishWorkout()">FINALIZAR TREINO</button>
+    <button class="ghost" style="width:100%;margin-top:7px" onclick="discardActive()">Descartar treino atual</button>
+  </section>
+
+  <section id="view-exercise" class="hidden">
+    <button class="back" onclick="openWorkout()">← Voltar ao treino</button>
+    <div class="eyebrow" id="exerciseEyebrow"></div>
+    <h1 style="font-size:36px" id="exerciseName"></h1>
+    <div class="sub" id="exercisePrescription"></div>
+
+    <div class="last" id="lastExerciseBox"></div>
+    <div class="tip" id="exerciseTip"></div>
+
+    <div id="setsContainer"></div>
+    <button class="secondary" style="width:100%;margin-top:12px" onclick="addExtraSet()">+ adicionar série</button>
+  </section>
+
+  <section id="view-run" class="hidden">
+    <button class="back" onclick="openWorkout()">← Voltar ao treino</button>
+    <div class="eyebrow">RUNNING / RUNA</div>
+    <h1 style="font-size:38px">CORRIDA</h1>
+    <div class="sub">O conteúdo do treino é determinado pelo Runa.</div>
+
+    <div class="card" style="margin-top:18px">
+      <div class="label">Duração</div>
+      <div class="counter">
+        <button onclick="changeRunDuration(-5)">−</button>
+        <div class="value"><span id="runDuration">40</span>&nbsp;min</div>
+        <button onclick="changeRunDuration(5)">+</button>
+      </div>
+      <div class="label">Esforço percebido</div>
+      <div class="chips" id="runEffortChips"></div>
+      <div class="label">Observação opcional</div>
+      <textarea id="runNote" placeholder="Ex.: pernas pesadas, respiração boa, treino confortável..."></textarea>
+      <button class="primary" style="margin-top:14px" onclick="completeRun()">✓ CORRIDA CONCLUÍDA</button>
+    </div>
+  </section>
+
+  <section id="view-progress" class="hidden">
+    <div class="hero">
+      <div class="eyebrow">HISTÓRICO</div>
+      <h1>PROGRESSO</h1>
+      <div class="sub">Consistência e evolução real, sem transformar o treino em obrigação performática.</div>
+    </div>
+
+    <div class="heat-card">
+      <div class="heat-head">
+        <div>
+          <div class="eyebrow">ÚLTIMOS 30 DIAS</div>
+          <div class="count"><span id="active30Count">0</span> / 30 dias</div>
+        </div>
+      </div>
+      <div class="heat-labels"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></div>
+      <div class="heat-grid" id="heatGrid"></div>
+    </div>
+
+    <div class="section-title">Esta semana</div>
+    <div class="card week-goal">
+      <div>
+        <b><span id="weekCount">0</span> / 5 treinos</b>
+        <div class="small">Meta semanal</div>
+      </div>
+      <div class="week-dots" id="weekDots"></div>
+    </div>
+
+    <div class="section-title">Últimos PRs</div>
+    <div class="card">
+      <div class="pr-list" id="prList"></div>
+    </div>
+
+    <div class="section-title">Exercícios</div>
+    <div class="exercise-list" id="progressExerciseList"></div>
+
+    <div class="section-title">Histórico recente</div>
+    <div class="card" id="recentSessions"></div>
+  </section>
+
+  <section id="view-coach" class="hidden">
+    <div class="hero">
+      <div class="eyebrow">DADOS</div>
+      <h1>COACH</h1>
+      <div class="sub">Integração com IA entra na próxima fase. Seus dados já estão prontos para isso.</div>
+    </div>
+    <div class="card">
+      <b>Backup</b>
+      <p class="small">Faça backup de vez em quando. Os dados ficam salvos neste navegador/aparelho.</p>
+      <div class="inline-actions">
+        <button class="secondary" onclick="exportData()">EXPORTAR JSON</button>
+        <button class="secondary" onclick="document.getElementById('importFile').click()">IMPORTAR JSON</button>
+      </div>
+      <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importData(event)"/>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs">
+  <button class="tab active" onclick="switchTab('home',this)">HOJE</button>
+  <button class="tab" onclick="openWorkoutFromTab(this)">TREINO</button>
+  <button class="tab" onclick="switchTab('progress',this)">PROGRESSO</button>
+  <button class="tab" onclick="switchTab('coach',this)">COACH</button>
+</nav>
+
+<div id="restTimerBar" class="timerbar hidden">
+  <div><div class="small">DESCANSO</div><strong id="restTimerText">01:30</strong></div>
+  <div class="row"><button onclick="addRest(30)">+30s</button><button onclick="stopRest()">pular</button></div>
+</div>
+
+
+<div id="completeOverlay" class="complete-overlay hidden">
+  <div class="complete-inner">
+    <div class="check-ring"><div class="check-mark">✓</div></div>
+    <div class="complete-title">PARABÉNS.</div>
+    <div class="complete-sub" id="completeText">Treino concluído.</div>
+  </div>
+</div>
+
+<div id="sheetOverlay" class="overlay hidden">
+  <div class="sheet" id="sheetContent"></div>
+</div>
+
+<script>
+const DB_KEY='laura_train_tracker_v4';
+const exercises={
+  dev_halter:{name:'Desenvolvimento com halteres',sets:3,min:6,max:10,focus:'Ombro',step:1,rest:90},
+  puxada_alta:{name:'Puxada alta',sets:3,min:8,max:12,focus:'Costas',step:1,rest:90},
+  elev_lateral:{name:'Elevação lateral',sets:3,min:10,max:15,focus:'Ombro',step:1,rest:60},
+  triceps_corda:{name:'Tríceps na corda',sets:3,min:8,max:12,focus:'Tríceps',step:1,rest:60},
+  remada:{name:'Remada máquina / cabo',sets:2,min:8,max:12,focus:'Costas',step:1,rest:90},
+  abs_polia:{name:'Abdominal na polia',sets:2,min:10,max:15,focus:'Abdômen',step:1,rest:60},
+  abs_barra:{name:'Elevação de joelhos na barra',sets:2,min:8,max:15,focus:'Abdômen',step:1,rest:60},
+  hack:{name:'Agachamento em máquina / hack',sets:3,min:6,max:10,focus:'Quadríceps',step:5,rest:150},
+  leg_press:{name:'Leg press',sets:3,min:8,max:12,focus:'Quadríceps / glúteo',step:5,rest:120},
+  extensora:{name:'Cadeira extensora',sets:3,min:10,max:15,focus:'Quadríceps',step:5,rest:75},
+  hip_thrust:{name:'Elevação pélvica',sets:3,min:8,max:12,focus:'Glúteo',step:5,rest:120},
+  abdutora:{name:'Abdutora',sets:3,min:12,max:20,focus:'Glúteo médio',step:5,rest:60},
+  rot_polia:{name:'Rotação de tronco na polia baixa',sets:2,min:10,max:15,focus:'Oblíquos',step:1,rest:45},
+  rosca:{name:'Rosca bíceps',sets:3,min:8,max:12,focus:'Bíceps',step:1,rest:60},
+  flexora:{name:'Mesa / cadeira flexora',sets:4,min:8,max:12,focus:'Posterior',step:5,rest:90},
+  coice:{name:'Coice na polia / máquina',sets:3,min:10,max:15,focus:'Glúteo',step:1,rest:60},
+  supino_incl:{name:'Supino inclinado máquina / halteres',sets:3,min:6,max:10,focus:'Peito',step:1,rest:120},
+};
+const workouts=[
+  {id:'A',name:'SUPERIOR A',focus:'Ombro · tríceps · costas',duration:50,run:true,ex:['dev_halter','puxada_alta','elev_lateral','triceps_corda','remada','abs_polia','abs_barra']},
+  {id:'B',name:'INFERIOR A',focus:'Quadríceps · glúteo',duration:60,run:false,ex:['hack','leg_press','extensora','hip_thrust','abdutora','abs_polia','rot_polia']},
+  {id:'C',name:'SUPERIOR B',focus:'Costas · bíceps · ombro',duration:50,run:true,ex:['puxada_alta','remada','dev_halter','elev_lateral','rosca','rot_polia','abs_barra']},
+  {id:'D',name:'INFERIOR B',focus:'Posterior · glúteo',duration:60,run:false,ex:['flexora','hip_thrust','leg_press','coice','abdutora','abs_polia','abs_barra']},
+  {id:'E',name:'SUPERIOR C',focus:'Ombro · tríceps · peito',duration:50,run:true,ex:['supino_incl','dev_halter','elev_lateral','triceps_corda','puxada_alta','rot_polia','abs_barra']},
+];
+
+function emptyDB(){return {nextWorkoutIndex:0,active:null,sessions:[]}}
+let db=loadDB(), currentExerciseId=null, restInterval=null, restRemaining=0, deferredPrompt=null, wakeLock=null;
+
+function loadDB(){
+  try{
+    const raw=localStorage.getItem(DB_KEY);
+    if(raw)return JSON.parse(raw);
+    for(const oldKey of ['laura_train_tracker_v3','laura_train_tracker_v2','laura_train_tracker_v1']){
+      const old=localStorage.getItem(oldKey);
+      if(old){const data=JSON.parse(old);localStorage.setItem(DB_KEY,JSON.stringify(data));return data;}
+    }
+    return emptyDB();
+  }catch(e){return emptyDB()}
+}
+function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db))}
+function nowISO(){return new Date().toISOString()}
+function fmtDate(s){return new Date(s).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}
+function show(id){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');window.scrollTo(0,0)}
+function setTabs(btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active')}
+document.getElementById('datePill').textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).toUpperCase();
+
+function getNextWorkout(){return workouts[db.nextWorkoutIndex%workouts.length]}
+function getActiveWorkoutDef(){return db.active?workouts.find(w=>w.id===db.active.workoutId):null}
+function getLastExerciseSession(id){
+  for(let i=db.sessions.length-1;i>=0;i--){
+    const ex=db.sessions[i].exercises?.find(x=>x.exerciseId===id);
+    if(ex)return {date:db.sessions[i].finishedAt,...ex}
+  }
+  return null
+}
+function getExerciseHistory(id){
+  return db.sessions.flatMap(s=>{
+    const ex=(s.exercises||[]).find(x=>x.exerciseId===id);
+    return ex?[{date:s.finishedAt,...ex}]:[]
+  })
+}
+
+function initActive(w){
+  const items={};
+  w.ex.forEach(id=>{
+    const def=exercises[id],last=getLastExerciseSession(id),ls=last?.sets?.filter(s=>s.done!==false)||[];
+    items[id]={exerciseId:id,completed:false,sets:Array.from({length:def.sets},(_,i)=>({
+      weight:ls[i]?.weight??ls[0]?.weight??0,
+      reps:ls[i]?.reps??ls[0]?.reps??def.min,
+      rir:2,technique:'boa',done:false
+    }))}
+  });
+  db.active={workoutId:w.id,startedAt:nowISO(),items,run:w.run?{done:false,duration:40,effort:3,note:''}:null};
+  saveDB();
+}
+function startOrContinue(){if(!db.active)initActive(getNextWorkout());openWorkout()}
+function goHome(){renderHome();show('view-home');setTabs(document.querySelectorAll('.tab')[0])}
+function switchTab(tab,btn){
+  setTabs(btn);
+  if(tab==='progress'){renderProgress();show('view-progress')}
+  else if(tab==='coach')show('view-coach');
+  else{renderHome();show('view-home')}
+}
+function openWorkoutFromTab(btn){setTabs(btn);if(db.active)openWorkout();else{renderHome();show('view-home')}}
+
+function renderHome(){
+  const w=db.active?getActiveWorkoutDef():getNextWorkout();
+  document.getElementById('homeEyebrow').textContent=db.active?'TREINO EM ANDAMENTO':'PRÓXIMO TREINO';
+  document.getElementById('homeWorkoutName').textContent=w.name;
+  document.getElementById('homeWorkoutFocus').textContent=w.focus;
+  document.getElementById('dailyQuote').textContent=getDailyQuote();
+  document.getElementById('homeMeta').innerHTML=`<span class="meta">${w.duration} min musculação</span>${w.run?'<span class="meta">+ 40 min corrida</span>':''}`;
+  let done=0,total=w.ex.length+(w.run?1:0);
+  if(db.active)done=Object.values(db.active.items).filter(x=>x.completed).length+(db.active.run?.done?1:0);
+  document.getElementById('homeProgress').style.width=(done/total*100)+'%';
+  document.getElementById('homeProgressText').textContent=`${done} / ${total} blocos concluídos`;
+  document.getElementById('homePrimary').textContent=db.active?'CONTINUAR TREINO':'COMEÇAR TREINO';
+  document.getElementById('homePrimary').onclick=startOrContinue;
+
+  document.getElementById('workoutFolders').innerHTML=workouts.map(x=>`
+    <div class="folder" onclick="openLibrary('${x.id}')">
+      <div class="letter">${x.id}</div>
+      <div class="folder-main">
+        <div class="folder-name">${x.name}</div>
+        <div class="folder-detail">${x.focus}</div>
+      </div>
+      <div class="status todo">ver ›</div>
+    </div>`).join('');
+
+  document.getElementById('sequenceRow').innerHTML=workouts.map((x,i)=>`<span class="badge ${i===db.nextWorkoutIndex?'current':''}">${x.id}</span>`).join('');
+  const last=db.sessions.at(-1);
+  document.getElementById('lastWorkoutCard').innerHTML=last?`<b>${last.workoutName||'CORRIDA'}</b><div class="small">${fmtDate(last.finishedAt)} · ${last.complete?'concluído':'incompleto'}</div>`:'<span class="small">Nenhum treino registrado ainda.</span>';
+}
+
+
+const dailyQuotes=[
+  'Hoje você só precisa superar a última versão de você que apareceu aqui.',
+  'Não precisa ser o melhor treino do mês. Só precisa ser um treino.',
+  'Treinar fofo era a versão antiga.',
+  'Consistência também inclui os dias medianos.',
+  'Você sabe qual é o próximo exercício. Faz ele.',
+  'Se hoje estiver pesado, a gente registra pesado também.',
+  'A última sessão deixou números. Hoje você deixa outros.',
+  'A Laura de terça colocou a meta. Resolve com ela.',
+  'Sem heroísmo. Só presença e uma série de cada vez.',
+  'Você não precisa estar com vontade. Só precisa começar.',
+  'O gráfico não pede perfeição. Pede dados.',
+  'Fez o que dava com o dia que tinha? Isso também conta.',
+  'Hoje é só mais uma observação no gráfico.',
+  'Não precisa ganhar de ninguém aqui. Só aparecer de novo.',
+  'Boa técnica primeiro. Ego depois.',
+  'Seu corpo não lê motivação. Ele lê repetição.',
+  'Um treino comum ainda é um treino que existe.',
+  'Começa. A parte de querer pode chegar depois.',
+  'Não negocia com o primeiro exercício.',
+  'A consistência é meio sem glamour. Ainda bem.'
+];
+function getDailyQuote(){
+  const d=new Date();
+  const key=Number(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`);
+  return dailyQuotes[key%dailyQuotes.length];
+}
+function openLibrary(id){
+  const w=workouts.find(x=>x.id===id);
+  document.getElementById('libraryTitle').textContent=w.name;
+  document.getElementById('libraryFocus').textContent=w.focus;
+  document.getElementById('libraryExercises').innerHTML=w.ex.map(exId=>{
+    const def=exercises[exId],last=getLastExerciseSession(exId);
+    let lastText='sem histórico';
+    if(last){
+      const sets=last.sets.filter(s=>s.done!==false && !s.warmup);
+      if(sets.length) lastText=`${sets[0].weight} kg · ${sets.map(s=>s.reps).join(' / ')}`;
+    }
+    return `<div class="readonly-row">
+      <div><div class="r-name">${def.name}</div><div class="small">${def.sets} séries · ${def.min}–${def.max} reps</div></div>
+      <div class="r-last">${lastText}</div>
+    </div>`;
+  }).join('') + (w.run?`<div class="readonly-row"><div><div class="r-name">Corrida Runa</div><div class="small">bloco de 40 min</div></div><div class="r-last">Runa</div></div>`:'');
+  show('view-library');
+}
+function dayKey(dateLike){
+  const d=new Date(dateLike);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function startOfWeek(d=new Date()){
+  const x=new Date(d);x.setHours(0,0,0,0);
+  const js=x.getDay();const diff=js===0?-6:1-js;x.setDate(x.getDate()+diff);return x;
+}
+function getActiveDayKeys(){
+  return new Set(db.sessions.filter(s=>s.complete || s.run?.done).map(s=>dayKey(s.finishedAt)));
+}
+
+function openWorkout(){
+  if(!db.active){goHome();return}
+  const w=getActiveWorkoutDef();
+  document.getElementById('activeWorkoutName').textContent=w.name;
+  document.getElementById('activeWorkoutFocus').textContent=w.focus;
+  document.getElementById('activeWorkoutMeta').innerHTML=`<span class="meta">${w.duration} min</span>${w.run?'<span class="meta">corrida 40 min</span>':''}`;
+  const total=w.ex.length+(w.run?1:0),done=Object.values(db.active.items).filter(x=>x.completed).length+(db.active.run?.done?1:0);
+  document.getElementById('activeProgress').style.width=(done/total*100)+'%';
+  document.getElementById('activeProgressText').textContent=`${done} / ${total} blocos concluídos`;
+
+  const list=document.getElementById('exerciseList');list.innerHTML='';
+  w.ex.forEach(id=>{
+    const item=db.active.items[id],def=exercises[id],doneSets=item.sets.filter(s=>s.done && !s.warmup).length,last=getLastExerciseSession(id);
+    const div=document.createElement('div');div.className='exercise';
+    const workSets=item.sets.filter(s=>!s.warmup);
+    div.innerHTML=`<div><div class="name ${item.skipped?'skipped':''}">${def.name}</div><div class="detail">${workSets.length} séries · ${def.min}–${def.max} reps · ${last?.sets?.length?`última ${last.sets[0].weight} kg`:'sem histórico'}</div></div><div class="status ${item.completed?'done':doneSets?'partial':'todo'}">${item.skipped?'pulado':item.completed?'✓ concluído':doneSets?`${doneSets}/${workSets.length}`:'abrir'}</div>`;
+    div.onclick=()=>openExercise(id);list.appendChild(div);
+  });
+  document.getElementById('runBlock').innerHTML=w.run?`<div class="section-title">Corrida</div><div class="exercise" onclick="openRun()"><div><div class="name">RUNA · 40 MIN</div><div class="detail">Treino determinado pelo Runa</div></div><div class="status ${db.active.run.done?'done':'todo'}">${db.active.run.done?'✓ concluída':'abrir'}</div></div>`:'';
+  show('view-workout');
+}
+
+function coachTip(id,last){
+  if(!last)return '<b>Referência:</b> este é o primeiro registro deste exercício. Use uma carga confortável para descobrir sua base real.';
+  const sets=last.sets.filter(s=>s.done!==false&&!s.warmup),w=sets[0]?.weight??0;
+  return `<b>Referência:</b> sua última execução começou em ${w} kg. Ajuste se precisar — o objetivo aqui é registrar o treino real, não obrigar você a superar a sessão anterior.`;
+}
+
+function openExercise(id){
+  currentExerciseId=id;const def=exercises[id],item=db.active.items[id],last=getLastExerciseSession(id);
+  document.getElementById('exerciseEyebrow').textContent=def.focus.toUpperCase();
+  document.getElementById('exerciseName').textContent=def.name.toUpperCase();
+  document.getElementById('exercisePrescription').textContent=`${item.sets.length} séries · ${def.min}–${def.max} reps · alvo RIR 1–2`;
+  const box=document.getElementById('lastExerciseBox');
+  if(last){
+    const sets=last.sets.filter(s=>s.done!==false && !s.warmup);
+    box.innerHTML=`<strong>ÚLTIMA VEZ · ${fmtDate(last.date)}</strong><div class="big">${sets[0]?.weight??0} kg</div><div>${sets.map(s=>s.reps).join(' · ')} reps</div><div class="small">RIR ${sets.map(s=>s.rir).join(' · ')}</div>`;
+  }else box.innerHTML='<strong>PRIMEIRO REGISTRO</strong><div class="small">Sem carga anterior salva.</div>';
+  document.getElementById('exerciseTip').innerHTML=coachTip(id,last);
+  renderSets();show('view-exercise');
+}
+
+function renderSets(){
+  const item=db.active.items[currentExerciseId],def=exercises[currentExerciseId],c=document.getElementById('setsContainer');c.innerHTML='';
+  if(item.skipped){
+    c.innerHTML=`<div class="note">Este exercício foi marcado como pulado.</div><button class="secondary" style="width:100%;margin-top:10px" onclick="resumeExercise()">RETOMAR EXERCÍCIO</button>`;
+    return;
+  }
+  item.sets.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='set-card';
+    d.innerHTML=`<div class="set-head"><b>${s.warmup?'<span class="warmup-tag">AQUECIMENTO</span>':'SÉRIE '+(item.sets.filter((x,idx)=>!x.warmup&&idx<=i).length)}</b><span class="small">${s.done?'concluída':'pendente'}</span></div>
+      <div class="label">Carga</div><div class="counter"><button onclick="changeVal(${i},'weight',-${def.step})">−</button><div class="value" onclick="editNumber(${i},'weight')">${fmtNum(s.weight)} kg</div><button onclick="changeVal(${i},'weight',${def.step})">+</button></div>
+      <div class="label">Repetições</div><div class="counter"><button onclick="changeVal(${i},'reps',-1)">−</button><div class="value" onclick="editNumber(${i},'reps')">${s.reps}</div><button onclick="changeVal(${i},'reps',1)">+</button></div>
+      ${s.warmup?'':`<div class="label">RIR</div><div class="chips">${[0,1,2,3,4].map(v=>`<button class="chip ${s.rir===v?'active':''}" onclick="setChoice(${i},'rir',${v})">${v===4?'4+':v}</button>`).join('')}</div>
+      <div class="label">Técnica</div><div class="chips">${['boa','ok','ruim'].map(v=>`<button class="chip ${s.technique===v?'active':''}" onclick="setChoice(${i},'technique','${v}')">${v}</button>`).join('')}</div>`}
+      <button class="set-complete ${s.done?'done':''}" onclick="toggleSet(${i})">${s.done?'✓ CONCLUÍDA':'CONCLUIR'}</button>`;
+    c.appendChild(d);
+  });
+  c.insertAdjacentHTML('beforeend',`<div class="inline-actions" style="margin-top:10px"><button class="secondary" onclick="addWarmupSet()">+ AQUECIMENTO</button><button class="secondary" onclick="skipExercise()">PULAR EXERCÍCIO</button></div>`);
+}
+function fmtNum(n){return Number.isInteger(Number(n))?Number(n):Number(n).toFixed(1)}
+function changeVal(i,key,d){const s=db.active.items[currentExerciseId].sets[i];s[key]=Math.max(0,(Number(s[key])||0)+d);saveDB();renderSets()}
+function editNumber(i,key){
+  const s=db.active.items[currentExerciseId].sets[i];
+  const label=key==='weight'?'Carga em kg':'Repetições';
+  openSheet(`<h3>${label}</h3><input id="numInput" inputmode="decimal" type="number" step="${key==='weight'?'0.5':'1'}" value="${s[key]}" style="width:100%;background:#101013;color:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;font-size:20px"><div class="actions"><button class="primary" onclick="saveNumber(${i},'${key}')">SALVAR</button><button class="secondary" onclick="closeSheet()">CANCELAR</button></div>`);
+  setTimeout(()=>document.getElementById('numInput')?.focus(),50);
+}
+function saveNumber(i,key){const v=Number(document.getElementById('numInput').value);if(!Number.isNaN(v)){db.active.items[currentExerciseId].sets[i][key]=v;saveDB()}closeSheet();renderSets()}
+function setChoice(i,key,v){db.active.items[currentExerciseId].sets[i][key]=v;saveDB();renderSets()}
+function toggleSet(i){
+  const item=db.active.items[currentExerciseId],s=item.sets[i],was=s.done;s.done=!s.done;item.completed=item.sets.filter(x=>!x.warmup).every(x=>x.done);item.skipped=false;saveDB();
+  if(!was&&s.done){startRest(exercises[currentExerciseId].rest||60);if(navigator.vibrate)navigator.vibrate(30)}
+  renderSets();
+}
+function addExtraSet(){const item=db.active.items[currentExerciseId],last=item.sets.filter(s=>!s.warmup).at(-1),def=exercises[currentExerciseId];item.sets.push({weight:last?.weight||0,reps:last?.reps||def.min,rir:2,technique:'boa',done:false,warmup:false});item.completed=false;item.skipped=false;saveDB();renderSets()}
+function addWarmupSet(){const item=db.active.items[currentExerciseId],def=exercises[currentExerciseId],last=item.sets.find(s=>!s.warmup);item.sets.unshift({weight:last?Math.max(0,Math.round((last.weight||0)*.6)):0,reps:def.min,rir:4,technique:'boa',done:false,warmup:true});saveDB();renderSets()}
+function skipExercise(){const item=db.active.items[currentExerciseId];item.skipped=true;item.completed=true;saveDB();openWorkout()}
+function resumeExercise(){const item=db.active.items[currentExerciseId];item.skipped=false;item.completed=item.sets.filter(s=>!s.warmup).every(s=>s.done);saveDB();renderSets()}
+
+function startRest(sec){restRemaining=sec;document.getElementById('restTimerBar').classList.remove('hidden');updateRest();clearInterval(restInterval);restInterval=setInterval(()=>{restRemaining--;updateRest();if(restRemaining<=0){if(navigator.vibrate)navigator.vibrate([100,80,100]);stopRest()}},1000)}
+function updateRest(){const m=Math.floor(restRemaining/60),s=restRemaining%60;document.getElementById('restTimerText').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+function addRest(sec){restRemaining+=sec;updateRest()}
+function stopRest(){clearInterval(restInterval);document.getElementById('restTimerBar').classList.add('hidden')}
+
+
+function startStandaloneRun(){
+  if(db.active){openSheet(`<h3>Treino em andamento</h3><div class="small">Finalize ou continue o treino atual antes de registrar uma corrida avulsa.</div><div class="actions"><button class="primary" onclick="closeSheet();openWorkout()">CONTINUAR TREINO</button></div>`);return}
+  db.standaloneRun={duration:40,effort:3,note:''};
+  document.getElementById('runDuration').textContent=40;
+  document.getElementById('runNote').value='';
+  document.getElementById('runEffortChips').innerHTML=[1,2,3,4,5].map(v=>`<button class="chip ${v===3?'active':''}" onclick="setStandaloneRunEffort(${v})">${v}</button>`).join('');
+  show('view-run');
+}
+function setStandaloneRunEffort(v){db.standaloneRun.effort=v;document.getElementById('runEffortChips').innerHTML=[1,2,3,4,5].map(x=>`<button class="chip ${x===v?'active':''}" onclick="setStandaloneRunEffort(${x})">${x}</button>`).join('')}
+
+function openRun(){const r=db.active.run;document.getElementById('runDuration').textContent=r.duration;document.getElementById('runNote').value=r.note||'';document.getElementById('runEffortChips').innerHTML=[1,2,3,4,5].map(v=>`<button class="chip ${r.effort===v?'active':''}" onclick="setRunEffort(${v})">${v}</button>`).join('');show('view-run')}
+function changeRunDuration(d){
+  if(db.standaloneRun){db.standaloneRun.duration=Math.max(0,db.standaloneRun.duration+d);document.getElementById('runDuration').textContent=db.standaloneRun.duration;return}
+  db.active.run.duration=Math.max(0,db.active.run.duration+d);saveDB();document.getElementById('runDuration').textContent=db.active.run.duration
+}
+function setRunEffort(v){
+  if(db.standaloneRun){setStandaloneRunEffort(v);return}
+  db.active.run.effort=v;saveDB();openRun()
+}
+function completeRun(){
+  if(db.standaloneRun){
+    db.standaloneRun.note=document.getElementById('runNote').value;
+    const r={...db.standaloneRun,done:true};
+    db.sessions.push({kind:'run',workoutId:null,workoutName:'CORRIDA',focus:'Runa',startedAt:nowISO(),finishedAt:nowISO(),complete:true,exercises:[],run:r});
+    delete db.standaloneRun;saveDB();showCompletion('Corrida concluída · '+r.duration+' min');return;
+  }
+  db.active.run.note=document.getElementById('runNote').value;db.active.run.done=true;saveDB();openWorkout()
+}
+
+function attemptFinishWorkout(){
+  const w=getActiveWorkoutDef(),miss=w.ex.filter(id=>!db.active.items[id].completed);if(w.run&&!db.active.run.done)miss.push('run');
+  if(miss.length){openSheet(`<h3>Treino incompleto</h3><div class="note">Faltam:<br>${miss.map(id=>'• '+(id==='run'?'Corrida':exercises[id].name)).join('<br>')}</div><div class="actions"><button class="primary" onclick="closeSheet()">VOLTAR</button><button class="secondary" onclick="closeSheet();finishWorkout(false)">FINALIZAR ASSIM</button></div>`)}
+  else finishWorkout(true);
+}
+function finishWorkout(complete){
+  const w=getActiveWorkoutDef();
+  const started=db.active.startedAt;
+  db.sessions.push({workoutId:w.id,workoutName:w.name,focus:w.focus,startedAt:started,finishedAt:nowISO(),complete,
+    exercises:w.ex.map(id=>({exerciseId:id,name:exercises[id].name,skipped:!!db.active.items[id].skipped,sets:db.active.items[id].sets.map(x=>({...x}))})),
+    run:db.active.run?{...db.active.run}:null});
+  db.active=null;db.nextWorkoutIndex=(workouts.findIndex(x=>x.id===w.id)+1)%workouts.length;saveDB();
+  const mins=Math.max(1,Math.round((new Date()-new Date(started))/60000));
+  showCompletion(`${w.name} · ${mins} min`);
+}
+function showCompletion(text){
+  document.getElementById('completeText').textContent=text;
+  document.getElementById('completeOverlay').classList.remove('hidden');
+  if(navigator.vibrate)navigator.vibrate([80,60,120]);
+  setTimeout(()=>{document.getElementById('completeOverlay').classList.add('hidden');goHome()},2100);
+}
+function discardActive(){openSheet(`<h3>Descartar treino?</h3><div class="small">A sessão atual será apagada.</div><div class="actions"><button class="primary" onclick="closeSheet()">CANCELAR</button><button class="secondary" onclick="db.active=null;saveDB();closeSheet();goHome()">DESCARTAR</button></div>`)}
+
+function renderProgress(){
+  const activeKeys=getActiveDayKeys();
+  const today=new Date();today.setHours(0,0,0,0);
+  const days=[];
+  for(let i=29;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);days.push(d)}
+  const active30=days.filter(d=>activeKeys.has(dayKey(d))).length;
+  document.getElementById('active30Count').textContent=active30;
+
+  const firstDay=days[0];
+  const lead=(firstDay.getDay()+6)%7;
+  let grid='';
+  for(let i=0;i<lead;i++)grid+='<div style="aspect-ratio:1/1"></div>';
+  grid+=days.map(d=>`<div class="heat-day ${activeKeys.has(dayKey(d))?'active':''} ${dayKey(d)===dayKey(today)?'today':''}" title="${d.toLocaleDateString('pt-BR')}"></div>`).join('');
+  document.getElementById('heatGrid').innerHTML=grid;
+
+  const ws=startOfWeek(today),we=new Date(ws);we.setDate(ws.getDate()+6);we.setHours(23,59,59,999);
+  const weekKeys=new Set(db.sessions.filter(s=>{const d=new Date(s.finishedAt);return d>=ws&&d<=we&&(s.complete||s.run?.done)}).map(s=>dayKey(s.finishedAt)));
+  const wc=weekKeys.size;
+  document.getElementById('weekCount').textContent=wc;
+  document.getElementById('weekDots').innerHTML=Array.from({length:5},(_,i)=>`<div class="week-dot ${i<wc?'active':''}"></div>`).join('');
+
+  const prs=getPREvents().slice(-5).reverse();
+  document.getElementById('prList').innerHTML=prs.length?prs.map(p=>`<div class="pr-item"><div><div class="main">${p.name}</div><div class="minor">${fmtDate(p.date)} · ${p.weight} kg × ${p.reps}</div></div><div class="pr-badge">${p.type}</div></div>`).join(''):'<div class="small">Os PRs aparecem aqui conforme você acumula histórico.</div>';
+
+  const ids=[...new Set(db.sessions.flatMap(s=>(s.exercises||[]).map(e=>e.exerciseId)))];
+  document.getElementById('progressExerciseList').innerHTML=ids.length?ids.map(id=>{
+    const h=getExerciseHistory(id),last=h.at(-1),work=h.flatMap(x=>x.sets.filter(s=>s.done!==false&&!s.warmup));
+    const best=work.length?Math.max(...work.map(s=>Number(s.weight)||0)):0;
+    return `<div class="exercise"><div><div class="name">${exercises[id].name}</div><div class="detail">${h.length} sessão(ões) · última ${fmtDate(last.date)}</div></div><div class="status done">${best} kg máx.</div></div>`
+  }).join(''):'<div class="card small">Seu histórico vai aparecer aqui depois do primeiro treino.</div>';
+
+  const recent=db.sessions.slice(-8).reverse();
+  document.getElementById('recentSessions').innerHTML=recent.length?recent.map((s,revIdx)=>{
+    const realIdx=db.sessions.length-1-revIdx;
+    return `<div class="session-row"><div><b>${s.workoutName||'CORRIDA'}</b><div class="small">${fmtDate(s.finishedAt)} · ${s.complete?'concluído':'incompleto'}</div></div>${(s.exercises||[]).length?`<button class="secondary" onclick="editSession(${realIdx})">EDITAR</button>`:''}</div>`
+  }).join(''):'<div class="small">Sem treinos registrados.</div>';
+}
+function getPREvents(){
+  const events=[],bestWeight={},bestRepsAtWeight={};
+  db.sessions.forEach(s=>(s.exercises||[]).forEach(ex=>{
+    const sets=ex.sets.filter(x=>x.done!==false&&!x.warmup);
+    if(!sets.length)return;
+    const id=ex.exerciseId,name=exercises[id]?.name||ex.name;
+    const sessionMax=Math.max(...sets.map(x=>Number(x.weight)||0));
+    const bestSetAtMax=sets.filter(x=>Number(x.weight)===sessionMax).sort((a,b)=>b.reps-a.reps)[0];
+    if(bestWeight[id]===undefined){
+      bestWeight[id]=sessionMax;
+    }else if(sessionMax>bestWeight[id]){
+      events.push({date:s.finishedAt,name,type:'PR CARGA',weight:sessionMax,reps:bestSetAtMax.reps});
+      bestWeight[id]=sessionMax;
+    }
+    const byWeight={};
+    sets.forEach(x=>{const k=String(Number(x.weight)||0);byWeight[k]=Math.max(byWeight[k]||0,Number(x.reps)||0)});
+    Object.entries(byWeight).forEach(([w,reps])=>{
+      const key=id+'@'+w;
+      if(bestRepsAtWeight[key]===undefined){bestRepsAtWeight[key]=reps}
+      else if(reps>bestRepsAtWeight[key]){
+        events.push({date:s.finishedAt,name,type:'PR REPS',weight:Number(w),reps});
+        bestRepsAtWeight[key]=reps;
+      }
+    });
+  }));
+  return events.sort((a,b)=>new Date(a.date)-new Date(b.date));
+}
+function editSession(index){
+  const s=db.sessions[index];
+  let html=`<h3>Editar ${s.workoutName}</h3><div class="small">${fmtDate(s.finishedAt)}</div>`;
+  (s.exercises||[]).forEach((ex,ei)=>{
+    html+=`<div class="section-title">${ex.name}</div>`;
+    ex.sets.filter(x=>!x.warmup).forEach((set,si)=>{
+      html+=`<div class="edit-grid" style="margin-top:7px"><input id="ew_${ei}_${si}" type="number" inputmode="decimal" value="${set.weight}" placeholder="kg"><input id="er_${ei}_${si}" type="number" inputmode="numeric" value="${set.reps}" placeholder="reps"></div>`;
+    });
+  });
+  html+=`<div class="actions"><button class="primary" onclick="saveEditedSession(${index})">SALVAR ALTERAÇÕES</button><button class="secondary" onclick="closeSheet()">CANCELAR</button></div>`;
+  openSheet(html);
+}
+function saveEditedSession(index){
+  const s=db.sessions[index];
+  (s.exercises||[]).forEach((ex,ei)=>{
+    let wi=0;
+    ex.sets.forEach(set=>{
+      if(set.warmup)return;
+      const w=document.getElementById(`ew_${ei}_${wi}`),r=document.getElementById(`er_${ei}_${wi}`);
+      if(w)set.weight=Number(w.value);if(r)set.reps=Number(r.value);wi++;
+    });
+  });
+  saveDB();closeSheet();renderProgress();
+}
+
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='laura-train-backup.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);saveDB();openSheet(`<h3>Backup importado</h3><div class="actions"><button class="primary" onclick="closeSheet();goHome()">OK</button></div>`)}catch(e){openSheet(`<h3>Arquivo inválido</h3><div class="actions"><button class="primary" onclick="closeSheet()">OK</button></div>`)}};r.readAsText(f)}
+
+function openSheet(html){document.getElementById('sheetContent').innerHTML=html;document.getElementById('sheetOverlay').classList.remove('hidden')}
+function closeSheet(){document.getElementById('sheetOverlay').classList.add('hidden')}
+
+async function toggleWakeLock(){
+  try{
+    if(wakeLock){await wakeLock.release();wakeLock=null;}
+    else if('wakeLock' in navigator){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null;renderHome()})}
+    else{openSheet(`<h3>Não disponível</h3><div class="small">Seu navegador não permite manter a tela ativa por este recurso.</div><div class="actions"><button class="primary" onclick="closeSheet()">OK</button></div>`)}
+  }catch(e){}
+  renderHome();
+}
+document.addEventListener('visibilitychange',async()=>{if(document.visibilityState==='visible'&&wakeLock){try{wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}});
+
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;renderInstallArea()});
+function renderInstallArea(){
+  const a=document.getElementById('installArea');
+  if(deferredPrompt)a.innerHTML=`<div class="section-title">No celular</div><div class="card install-banner"><b>Instalar como app</b><div class="small">Adiciona o Laura Train à tela inicial e abre sem a barra do navegador.</div><button class="secondary" style="width:100%;margin-top:10px" onclick="installApp()">ADICIONAR À TELA INICIAL</button></div>`;
+  else a.innerHTML=`<div class="section-title">No celular</div><div class="note">Para usar como app: abra esta página no navegador do celular e use <b>Adicionar à Tela de Início</b>. Em iPhone, isso fica no menu Compartilhar do Safari.</div>`;
+}
+async function installApp(){if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;renderInstallArea()}
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}))}
+renderHome();
+</script>
+</body>
+</html>
